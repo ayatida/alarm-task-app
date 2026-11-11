@@ -22,15 +22,17 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         createChannel()
+        val taskName = intent?.getStringExtra("TASK_NAME") ?: "Your Task"
 
         val fullScreen = PendingIntent.getActivity(
             this, 3,
-            Intent(this, AlarmActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(this, TaskActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("TASK_NAME", taskName),
             PendingIntent.FLAG_IMMUTABLE
         )
+        
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-            .setContentTitle("Alarm")
+            .setContentTitle("Alarm: $taskName")
             .setContentText("Tap to open")
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -42,31 +44,24 @@ class AlarmService : Service() {
         ServiceCompat.startForeground(
             this, 1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
         )
+        
         startRinging()
 
-        // ★ NEW: explicitly try to launch the activity as well
         try {
             startActivity(
-                Intent(this, AlarmActivity::class.java).addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP or
-                    Intent.FLAG_ACTIVITY_NO_USER_ACTION
-                )
+                Intent(this, TaskActivity::class.java).addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NO_USER_ACTION
+                ).putExtra("TASK_NAME", taskName)
             )
-        } catch (_: Exception) {
-            // Some OEMs will throw — full screen intent fallback handles this
-        }
+        } catch (_: Exception) { }
 
         return START_NOT_STICKY
     }
 
     private fun startRinging() {
         if (ringtone?.isPlaying == true) return
-
-        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-
-        if (alarmUri == null) return // no sound available at all
+        val alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM) ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+        if (alarmUri == null) return 
 
         ringtone = RingtoneManager.getRingtone(this, alarmUri)?.apply {
             audioAttributes = AudioAttributes.Builder()

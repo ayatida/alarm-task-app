@@ -7,6 +7,10 @@ import androidx.core.content.ContextCompat
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        ContextCompat.startForegroundService(context, Intent(context, AlarmService::class.java))
+        val taskName = intent.getStringExtra("TASK_NAME") ?: "Complete your task"
+        val serviceIntent = Intent(context, AlarmService::class.java).apply {
+            putExtra("TASK_NAME", taskName)
+        }
+        ContextCompat.startForegroundService(context, serviceIntent)
     }
 }
