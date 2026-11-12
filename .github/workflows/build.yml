@@ -17,21 +17,26 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # ★ UPGRADE to v4 and specify the exact packages you need
-      - name: Setup Android SDK and Packages
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
           packages: 'platforms;android-35 build-tools;35.0.0'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.9
+      - name: Build with Gradle Wrapper
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean assembleDebug --stacktrace --info
 
-      - name: Build Debug APK
-        run: gradle assembleDebug --stacktrace
+      - name: Diagnostic Output
+        if: failure()
+        run: |
+          echo "--- Dependency Report ---"
+          ./gradlew :app:dependencies --configuration debugRuntimeClasspath
+          echo "--- File Structure ---"
+          find app -name "*.so"
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug

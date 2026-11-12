@@ -16,17 +16,17 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1"
-
-        // kapt generates DAO/Database impls at compile time
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
     }
 
     buildTypes {
         release { isMinifyEnabled = false }
+        debug {
+            packaging {
+                jniLibs {
+                    useLegacyPackaging = true
+                }
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -35,13 +35,9 @@ android {
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
 
-    // Room needs annotation processing (kapt)
     kapt {
         correctErrorTypes = true
     }
-}
-
-dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.10.01"))
     implementation("androidx.activity:activity-compose:1.9.3")
     implementation("androidx.compose.material3:material3")

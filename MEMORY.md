@@ -1,0 +1,6 @@
+- [Build Fix] Fixed GitHub Actions CI build failure at stripDebugDebugSymbols - added Gradle wrapper and legacy JNI packaging config
+- [Architecture] Designed Room database, AlarmRepository, and domain model with bitmask weekday storage
+- [UI/UX] Created modern Compose UI with AddAlarmScreen, HomeScreen, and proper navigation
+- [Scheduling] Implemented NextTriggerCalculator with NONE/DAILY/WEEKLY/EVERY_X repeat types
+- [Persistence] Room database with AlarmEntity, AlarmDao, and proper data model
+- [Background] Foreground service with proper notification channels and AlarmManager scheduling
