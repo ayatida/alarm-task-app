@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    // Room persistence (SQLite-backed)
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -14,6 +16,13 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1"
+
+        // kapt generates DAO/Database impls at compile time
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -25,6 +34,11 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     buildFeatures { compose = true }
+
+    // Room needs annotation processing (kapt)
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -42,4 +56,14 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$cameraxVersion")
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
     implementation("androidx.camera:camera-view:$cameraxVersion")
+
+    // Room persistence
+    val roomVersion = "2.7.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+
+    // Lifecycle-aware ViewModels / StateFlow-backed state
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
 }
