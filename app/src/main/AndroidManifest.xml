@@ -1,33 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    
-    <!-- Camera Permission -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
-
     <application
         android:allowBackup="false"
         android:icon="@android:drawable/ic_lock_idle_alarm"
         android:label="Alarm Task"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
-
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- TaskActivity jo lock screen par khulegi -->
         <activity
             android:name=".TaskActivity"
             android:exported="false"
@@ -35,15 +27,7 @@
             android:turnScreenOn="true"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true" />
-
         <receiver android:name=".AlarmReceiver" android:exported="false" />
-        <receiver android:name=".receiver.BootReceiver" android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
-            </intent-filter>
-        </receiver>
-
         <service
             android:name=".AlarmService"
             android:exported="false"
